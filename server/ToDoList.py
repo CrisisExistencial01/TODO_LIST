@@ -11,7 +11,8 @@ def create_app():
 app = create_app()
 
 @app.route("todos")
-
+def validar():
+    pass
 def get_todos():
 
     return jsonify(todos) # RETORNA TODOS LOS TODOS EN FORMATO JSON
