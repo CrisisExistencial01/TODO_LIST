@@ -4,46 +4,53 @@ import sys
 
 class Client:
     def __init__(self):
-        self.url = 'http://50.16.235.247:8081/todos'
-        self.ToDos = self.get()
+        self.CC_url = 'http://50.16.235.247:8081/todos'
+        self.CC_todos = self.get()
 
     def get(self):
         try:
-            response = requests.get(self.url)
-            return response.json()
+            CC_response = requests.get(self.CC_url)
+            return CC_response.json()
         except requests.exceptions.RequestException as e:
             print("Error al obtener las tareas:", e)
             return None
     def get_todos(self):
-        formatted_tasks = [f'{task["task"]}, id: {task["ID"]}' for task in self.ToDos]
+        formatted_tasks = [f'{task["task"]}, id: {task["ID"]}' for task in self.CC_todos]
         return formatted_tasks
 
     def add_task(self):
         description = input("Ingrese la descripción de la tarea: ")
-        todo_id = len(self.ToDos) + 1 # ID de la nueva tarea es el siguiente al último
-        data = {"ID":todo_id, "task":description}
-        self.ToDos.append(data)
-        response = self.post(data)
-        if response is not None:
-            print("Tarea creada exitosamente:", response)
+        CC_todo_id = len(self.CC_todos) + 1 # ID de la nueva tarea es el siguiente al último
+        CC_data = {"ID":CC_todo_id, "task":description}
+        self.CC_todos.append(CC_data)
+        CC_response = self.post(CC_data)
+        if CC_response is not None:
+            print("Tarea creada exitosamente:")
 
     def update_task(self):
-        task_id = int(input("Ingrese el ID de la tarea que desea actualizar: "))
-        description = input("Ingrese la nueva descripción de la tarea: ")
+        task_id = input("Ingrese el ID de la tarea que desea actualizar: ")
+        if not task_id.isdigit():
+            print("ID inválido. Por favor, intenta de nuevo.")
+            return None
 
-        #data = {'task': description} # ID de la tarea a actualizar y la nueva descripción de la tarea
-        data = {"ID":task_id, "task":description}
-        response = self.put(task_id, data) # self.put(data) si se quiere enviar el ID         
-        if response is not None:
-            print("Tarea actualizada exitosamente:", response)
-            self.ToDos = self.get()
+        description = input("Ingrese la nueva descripción de la tarea: ")
+        CC_data = {"ID":task_id, "task":description}
+        CC_response = self.put(task_id, CC_data) # self.put(CC_data) si se quiere enviar el ID         
+        if CC_response is not None:
+            print("Tarea actualizada exitosamente:")
+            self.CC_todos = self.get()
     def delete_task(self):
+        # ingresa un id, lo valida y lo envia a la funcion delete
         task_id = input("Ingrese el ID de la tarea que desea eliminar: ")
-        #response = self.delete(f"{self.url}/{task_id}")
-        response = self.delete(task_id)
-        if response is not None:
+        if not task_id.isdigit():
+            print("ID inválido. Por favor, intenta de nuevo.")
+            return None
+
+        CC_response = self.delete(task_id)
+
+        if CC_response is not None:
             print("Tarea eliminada exitosamente")
-            self.ToDos = self.get()
+            self.CC_todos = self.get()
 
     def menuText(self):
         print("1. Ver todas las tareas")
@@ -71,28 +78,28 @@ class Client:
                 print("Opción inválida. Por favor, intenta de nuevo.")
         print("¡Adiós!")
 
-    def post(self, data):
+    def post(self, CC_data):
         try:
-            response = requests.post(self.url, json=data)
-            return response.json()
+            CC_response = requests.post(self.CC_url, json=CC_data)
+            return CC_response.json()
         except requests.exceptions.RequestException as e:
             print("Error al crear la tarea:", e)
             return None
 
-    def put(self, task_id, data):
+    def put(self, task_id, CC_data):
         try:
-            update_url = f"{self.url}/{task_id}"
-            response = requests.put(update_url, json=data)
-            return response.json()
+            update_CC_url = f"{self.CC_url}/{task_id}"
+            CC_response = requests.put(update_CC_url, json=CC_data)
+            return CC_response.json()
         except requests.exceptions.RequestException as e:
             print("Error al actualizar la tarea:", e)
             return None
 
     def delete(self, task_id):
         try:
-            delete_url = f"{self.url}/{task_id}"
-            response = requests.delete(delete_url)
-            return response.json()
+            delete_CC_url = f"{self.CC_url}/{task_id}"
+            CC_response = requests.delete(delete_CC_url)
+            return CC_response.json()
         except requests.exceptions.RequestException as e:
             print("Error al eliminar la tarea:", e)
             return None
