@@ -32,16 +32,17 @@ class Client:
         description = input("Ingrese la nueva descripción de la tarea: ")
 
         data = {'ID':task_id,'task': description} # ID de la tarea a actualizar y la nueva descripción de la tarea
-        response = self.put(data) # self.put(data) si se quiere enviar el ID 
+        response = self.put(task_id, description) # self.put(data) si se quiere enviar el ID         
         if response is not None:
             print("Tarea actualizada exitosamente:", response)
-
+            self.ToDos = self.get()
     def delete_task(self):
         task_id = input("Ingrese el ID de la tarea que desea eliminar: ")
         #response = self.delete(f"{self.url}/{task_id}")
         response = self.delete(task_id)
         if response is not None:
             print("Tarea eliminada exitosamente")
+            self.ToDos = self.get()
 
     def menuText(self):
         print("1. Ver todas las tareas")
