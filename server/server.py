@@ -33,9 +33,16 @@ class TodoServer:
 
     def add_todo(self):
         data = request.json
+        # Asignar un nuevo ID basado en el número total de tareas
+        new_id = len(self.todos) + 1
+        # Agregar el nuevo ID a los datos de la tarea
+        data['ID'] = new_id
+        # Agregar la nueva tarea a la lista de tareas
         self.todos.append(data)
+        # Guardar los cambios en el archivo JSON
         self.save_data()
         return jsonify(data), 201
+
 
     def update_todo(self, id):
         todo = next((t for t in self.todos if t['id'] == id), None)
