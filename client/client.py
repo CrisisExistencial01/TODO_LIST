@@ -1,6 +1,4 @@
 import requests
-import json
-import sys
 
 class Client:
     def __init__(self):
@@ -14,14 +12,15 @@ class Client:
         except requests.exceptions.RequestException as e:
             print("Error al obtener las tareas:", e)
             return None
+
     def get_todos(self):
-        formatted_tasks = [f'{task["task"]}, id: {task["ID"]}' for task in self.ToDos]
+        formatted_tasks = [f'{task["task"]} {task["ID"]}' for task in self.ToDos]
         return formatted_tasks
 
     def add_task(self):
         description = input("Ingrese la descripción de la tarea: ")
-        todo_id = len(self.ToDos) + 1 # ID de la nueva tarea es el siguiente al último
-        data = {"ID":todo_id, "task":description}
+        todo_id = len(self.ToDos) + 1  # Genera un ID único para la nueva tarea
+        data = {"ID": todo_id, "task": description}
         self.ToDos.append(data)
         response = self.post(data)
         if response is not None:
@@ -31,14 +30,13 @@ class Client:
         task_id = int(input("Ingrese el ID de la tarea que desea actualizar: "))
         description = input("Ingrese la nueva descripción de la tarea: ")
 
-        data = {'ID':task_id,'task': description} # ID de la tarea a actualizar y la nueva descripción de la tarea
-        response = self.put(data) # self.put(data) si se quiere enviar el ID 
+        data = {'ID': task_id, 'task': description}  # ID de la tarea a actualizar y la nueva descripción de la tarea
+        response = self.put(task_id, data)
         if response is not None:
             print("Tarea actualizada exitosamente:", response)
 
     def delete_task(self):
         task_id = input("Ingrese el ID de la tarea que desea eliminar: ")
-        #response = self.delete(f"{self.url}/{task_id}")
         response = self.delete(task_id)
         if response is not None:
             print("Tarea eliminada exitosamente")
@@ -57,7 +55,6 @@ class Client:
             if choice == '1':
                 for i in self.get_todos():
                     print(i)
-                print(self.ToDos)
             elif choice == '2':
                 self.add_task()
             elif choice == '3':
