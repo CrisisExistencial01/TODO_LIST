@@ -36,7 +36,7 @@ class TodoServer:
         # Asignar un nuevo ID basado en el número total de tareas
         new_id = len(self.todos) + 1
         # Agregar el nuevo ID a los datos de la tarea
-        data['ID'] = new_id
+        data['id'] = new_id
         # Agregar la nueva tarea a la lista de tareas
         self.todos.append(data)
         # Guardar los cambios en el archivo JSON
