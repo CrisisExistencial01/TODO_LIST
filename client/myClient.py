@@ -31,8 +31,9 @@ class Client:
         task_id = int(input("Ingrese el ID de la tarea que desea actualizar: "))
         description = input("Ingrese la nueva descripción de la tarea: ")
 
-        data = {'ID':task_id,'task': description} # ID de la tarea a actualizar y la nueva descripción de la tarea
-        response = self.put(task_id, description) # self.put(data) si se quiere enviar el ID         
+        #data = {'task': description} # ID de la tarea a actualizar y la nueva descripción de la tarea
+        data = {"ID":task_id, "task":description}
+        response = self.put(task_id, data) # self.put(data) si se quiere enviar el ID         
         if response is not None:
             print("Tarea actualizada exitosamente:", response)
             self.ToDos = self.get()
@@ -58,7 +59,6 @@ class Client:
             if choice == '1':
                 for i in self.get_todos():
                     print(i)
-                print(self.ToDos)
             elif choice == '2':
                 self.add_task()
             elif choice == '3':
