@@ -4,7 +4,7 @@ class requestManager:
 
     def __init__(self):
         self.app = Flask(__name__)
-        self.mongo = mongoManager()
+        self.mongo = MongoManager()
         self.user_rut = None
 
     def register_routes(self):
@@ -12,20 +12,20 @@ class requestManager:
         # associating the routes with the methods of the class
 
         # GET -> se pueden llamar desde el navegador
-        app.route("/logout", methods=["GET"])(self.logout)
-        app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
+        self.app.route("/logout", methods=["GET"])(self.logout)
+        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
 
         # POST
-        app.route("/login", methods=["POST"])(self.login)
-        app.route("/register", methods=["POST"])(self.register)
-        app.route("/<user_rut>/todos", methods=["POST"])(self.add_todo)
+        self.app.route("/login", methods=["POST"])(self.login)
+        self.app.route("/register", methods=["POST"])(self.register)
+        self.app.route("/<user_rut>/todos", methods=["POST"])(self.add_todo)
 
         # PUT
-        app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(self.update_todo)
+        self.app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(self.update_todo)
 
         # DELETE
-        app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
-        app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
+        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
+        self.app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
 
     def login(self):
         data = request.get_json()
