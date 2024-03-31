@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
-from mongoManager import mongoManager
+from mongoManager import MongoManager
 class requestManager:
 
     def __init__(self):
+        self.app = Flask(__name__)
         self.mongo = mongoManager()
         self.user_rut = None
 
@@ -11,20 +12,20 @@ class requestManager:
         # associating the routes with the methods of the class
 
         # GET -> se pueden llamar desde el navegador
-        self.app.route("/logout", methods=["GET"])(self.logout)
-        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
+        app.route("/logout", methods=["GET"])(self.logout)
+        app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
 
         # POST
-        self.app.route("/login", methods=["POST"])(self.login)
-        self.app.route("/register", methods=["POST"])(self.register)
-        self.app.route("/<user_rut>/todos", methods=["POST"])(self.add_todo)
+        app.route("/login", methods=["POST"])(self.login)
+        app.route("/register", methods=["POST"])(self.register)
+        app.route("/<user_rut>/todos", methods=["POST"])(self.add_todo)
 
         # PUT
-        self.app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(self.update_todo)
+        app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(self.update_todo)
 
         # DELETE
-        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
-        self.app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
+        app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
+        app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
 
     def login(self):
         data = request.get_json()
@@ -84,8 +85,10 @@ class requestManager:
         self.mongo.delete_user(self.user_rut)
         return jsonify({"msg": "User deleted successfully"})
 
+    def run(self, host ='0.0.0.0',port=8081):
+        self.app.run(host=host,port=port, debug=True)
+
 if __name__ == "__main__":
-    app = Flask(__name__)
     manager = requestManager()
     manager.register_routes()
-    app.run(port=8081, debug=True)
+    manager.run()
