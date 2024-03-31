@@ -1,4 +1,4 @@
-from mongoDB import MongoManager
+from mongoManager import MongoManager
 
 class Tester:
     def __init__(self):
