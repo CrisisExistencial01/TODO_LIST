@@ -5,8 +5,10 @@ import requests
 class TodoApp(QWidget):
     def __init__(self):
         super().__init__()
-
+        self.drawLogin()
         self.url = 'http://50.16.235.247:8081' # Server_ip:PORT
+
+    def drawLogin(self):
 
         self.setWindowTitle('Todo App')
         self.layout = QVBoxLayout()
@@ -29,12 +31,28 @@ class TodoApp(QWidget):
         self.label_message = QLabel('')
         self.layout.addWidget(self.label_message)
 
+        self.button_register = QPushButton('Register')
+        self.button_register.clicked.connect(self.register)
+        self.layout.addWidget(self.button_register)
+
         self.setLayout(self.layout)
+
 
     def login(self):
         rut = self.input_rut.text()
         password = self.input_password.text()
-        response = requests.post('{self.url}/login', json={'user': rut, 'password': password})
+        response = requests.post(f'{self.url}/login', json={'user': rut, 'password': password})
+        if response.status_code == 200:
+            message = response.json()['msg']
+            self.label_message.setText(message)
+        else:
+            error_message = response.json().get('msg', 'An error occurred')
+            QMessageBox.critical(self, 'Error', error_message)
+
+    def register(self):
+        rut = self.input_rut.text()
+        password = self.input_password.text()
+        response = requests.post(f'{self.url}/register', json={'rut': rut, 'password': password})
         if response.status_code == 200:
             message = response.json()['msg']
             self.label_message.setText(message)
