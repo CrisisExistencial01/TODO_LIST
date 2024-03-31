@@ -1,12 +1,21 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
 import requests
+url = 'http://50.16.235.247:8081'
+
+class logWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    def initUI():
+        self.setWindowTitle('Login')
+        self.setGeometry(100, 100, 300, 200)
+        self.show()
 
 class TodoApp(QWidget):
     def __init__(self):
         super().__init__()
         self.drawLogin()
-        self.url = 'http://50.16.235.247:8081' # Server_ip:PORT
 
     def drawLogin(self):
 
@@ -37,14 +46,24 @@ class TodoApp(QWidget):
 
         self.setLayout(self.layout)
 
+    def drawTodoList(self):
+        self.layout = QVBoxLayout()
+        self.label_todo = QLabel('Todo List')
+        self.layout.addWidget(self.label_todo)
 
+        self.button_logout = QPushButton('Logout')
+        self.button_logout.clicked.connect(self.drawLogin)
+        self.layout.addWidget(self.button_logout)
+
+        self.setLayout(self.layout)
     def login(self):
         rut = self.input_rut.text()
         password = self.input_password.text()
-        response = requests.post(f'{self.url}/login', json={'user': rut, 'password': password})
+        response = requests.post(f'{url}/login', json={'user': rut, 'password': password})
         if response.status_code == 200:
             message = response.json()['msg']
             self.label_message.setText(message)
+            self.drawTodoList()
         else:
             error_message = response.json().get('msg', 'An error occurred')
             QMessageBox.critical(self, 'Error', error_message)
@@ -52,7 +71,7 @@ class TodoApp(QWidget):
     def register(self):
         rut = self.input_rut.text()
         password = self.input_password.text()
-        response = requests.post(f'{self.url}/register', json={'rut': rut, 'password': password})
+        response = requests.post(f'{url}/register', json={'rut': rut, 'password': password})
         if response.status_code == 200:
             message = response.json()['msg']
             self.label_message.setText(message)
@@ -62,7 +81,7 @@ class TodoApp(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    todo_app = TodoApp()
-    todo_app.show()
+    login = logWindow()
+    login.show()
     sys.exit(app.exec_())
 
