@@ -33,6 +33,7 @@ class requestManager:
         password = data["password"]
         if self.mongo.login(user, password):
             self.user_rut = user
+
             return jsonify({"msg": "Logged in successfully"})
         else:
             return jsonify({"msg": "Invalid credentials"})
@@ -66,13 +67,13 @@ class requestManager:
         #        }
 
         data = request.get_json()
-        data["rut"] = self.user_rut
+        data["user"] = self.user_rut
         self.mongo.insert_task(self.user_rut, data)
         return jsonify({"msg": "Task added successfully"})
 
     def update_todo(self, user_rut, task_id):
         data = request.get_json()
-        data["rut"] = self.user_rut
+        data["user"] = self.user_rut
         self.mongo.update_task(self.user_rut, task_id, data)
         return jsonify({"msg": "Task updated successfully"})
 
