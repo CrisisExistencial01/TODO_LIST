@@ -84,7 +84,7 @@ class MongoManager:
         self.delete(self.users, {"rut": rut})
 
     # Task functions
-    def insert_task(self, rut, query): # query is a dictionary
+    def insert_task(self, rut, data): # query is a dictionary
 # FORMAT:
 #   rut = query["user"]
 #   title = query["title"]
