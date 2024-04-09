@@ -4,7 +4,13 @@ class LocalClient:
     def __init__(self):
         self.user = None
         self.url = "http://50.16.235.247:8081"
-
+    def verificarConexion(self):
+        print("Verificando conexión con el servidor...")
+        try:
+            response = requests.get(self.url, timeout=3) # timeout=5 indica que la conexión se considera fallida si no se recibe respuesta en 5 segundos
+            return True
+        except requests.exceptions.RequestException:
+            return False
     def get(self, path):
         response = requests.get(self.url + path)
         return response.json()["msg"]
@@ -54,11 +60,52 @@ class LocalClient:
     def delete_todo(self, task_id):
         path = f"/{self.user}/todos/{task_id}"
         return self.delete(path)
+class menu:
+    def __init__(self):
+        self.client = LocalClient()
+        self.user = None
+    def login(self):
+        rut = input("Ingrese su rut: ")
+        password = input("Ingrese su contraseña: ")
+        response = self.client.login(rut, password)
+        print(response) # Imprime "Logged in successfully" o "Invalid credentials"
+        if response == "Logged in successfully":
+            self.user = rut
+    def register(self):
+        rut = input("Ingrese su rut: ")
+        password = input("Ingrese su contraseña: ")
+        response = self.client.register(rut, password)
+        print(response) # Imprime "User created successfully" o "User already exists"
+    def logout(self):
+        response = self.client.logout()
+        print(response) # Imprime "Logged out successfully"
+    def menuText(self):
+        print("1. Iniciar sesión")
+        print("2. Registrarse")
+        print("3. Cerrar sesión")
+        print("4. Salir")
+    def menu(self):
+        if self.client.verificarConexion():
+            while True:
+                self.menuText()
+                option = input("Seleccione una opción: ")
+                if option == "1":
+                    self.login()
+                elif option == "2":
+                    self.register()
+                elif option == "3":
+                    self.logout()
+                elif option == "4":
+                    break
+                else:
+                    print("Opción no válida")
+        else:
+            print("No se pudo establecer conexión con el servidor")
+    def run(self):
+        self.menu()
 
-client = LocalClient()
-
-# Ejemplo de uso:
 # Iniciar sesión
+"""
 login_response = client.login("0000", "1234")
 print(login_response)
 new_user = {"rut": "1111", "password": "4321"}
@@ -69,11 +116,15 @@ print(register_response)
 #print(todos)
 
 # Agregar una nueva tarea
-task = {"title": "Nueva tarea", "description": "Descripción de la nueva tarea"}
-add_response = client.add_todo(task["title"], task["description"])
+# task = {"title": "Nueva tarea", "description": "Descripción de la nueva tarea"}
+# add_response = client.add_todo(task["title"], task["description"])
 print(add_response)
 
 # Cerrar sesión
 logout_response = client.logout()
 print(logout_response)
+"""
 
+if __name__ == "__main__":
+    menu = menu()
+    menu.run()
