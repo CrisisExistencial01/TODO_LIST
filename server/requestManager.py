@@ -26,6 +26,7 @@ class requestManager:
         # DELETE
         self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
         self.app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
+        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
 
     def login(self):
         data = request.get_json()

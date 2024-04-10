@@ -84,6 +84,39 @@ class menu:
         print("2. Registrarse")
         print("3. Cerrar sesión")
         print("4. Salir")
+    def printTodos(self):
+        todos = self.client.get_todos()
+        print("Tareas:")
+        for task in todos:
+            print(f"{task['id']}. {task['title']} ({task['status']})")
+    def menuUser(self):
+        while True:
+            print("1. Agregar tarea")
+            print("2. Editar tarea")
+            print("3. Eliminar tarea")
+            print("0. Volver")
+            option = input("Seleccione una opción: ")
+            if option == "1":
+                title = input("Ingrese el título de la tarea: ")
+                description = input("Ingrese la descripción de la tarea: ")
+                response = self.client.add_todo(title, description)
+                print(response)
+            elif option == "2":
+                task_id = input("Ingrese el id de la tarea a editar: ")
+                title = input("Ingrese el nuevo título de la tarea: ")
+                status = input("Ingrese el nuevo estado de la tarea: ")
+                description = input("Ingrese la nueva descripción de la tarea: ")
+                response = self.client.update_todo(task_id, title, status, description)
+                print(response)
+            elif option == "3":
+                task_id = input("Ingrese el id de la tarea a eliminar: ")
+                response = self.client.delete_todo(task_id)
+                print(response)
+            elif option == "0":
+                break
+            else:
+                print("Opción no válida")
+
     def menu(self):
         if self.client.verificarConexion():
             while True:
@@ -91,11 +124,13 @@ class menu:
                 option = input("Seleccione una opción: ")
                 if option == "1":
                     self.login()
+                    if self.user:
+                        self.menuUser()
                 elif option == "2":
                     self.register()
                 elif option == "3":
                     self.logout()
-                elif option == "4":
+                elif option == "0":
                     break
                 else:
                     print("Opción no válida")
