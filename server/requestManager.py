@@ -73,15 +73,17 @@ class requestManager:
 
     def update_todo(self, user_rut, task_id):
         data = request.get_json()
-        data["user"] = self.user_rut
+        #data["user"] = self.user_rut
         self.mongo.update_task(self.user_rut, task_id, data)
         return jsonify({"msg": "Task updated successfully"})
 
     def delete_todo(self, user_rut, task_id):
-        self.mongo.delete_task(self.user_rut, task_id)
-
-        return jsonify({"msg": "Task deleted successfully"})
-
+        data = request.get_json()
+        try:
+            self.mongo.delete_task(self.user_rut, data)
+            return jsonify({"msg": "Task deleted successfully"})
+        except:
+            return jsonify({"msg": "Task not found"})
     def delete_user(self, user_rut):
         self.mongo.delete_user(self.user_rut)
         return jsonify({"msg": "User deleted successfully"})
