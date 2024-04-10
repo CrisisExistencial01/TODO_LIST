@@ -5,7 +5,7 @@ class requestManager:
     def __init__(self):
         self.app = Flask(__name__)
         self.mongo = MongoManager()
-        self.user_rut = "0000"
+        self.user_rut = None
 
     def register_routes(self):
 
@@ -13,7 +13,7 @@ class requestManager:
 
         # GET -> se pueden llamar desde el navegador
         self.app.route("/logout", methods=["GET"])(self.logout)
-        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos(self.user_rut))
+        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
 
         # POST
         self.app.route("/login", methods=["POST"])(self.login)
@@ -50,8 +50,8 @@ class requestManager:
         else:
             return jsonify({"msg": "User already exists"})
     
-    def get_todos(self, user_rut):
-        todos = self.mongo.find_user_tasks(user_rut)
+    def get_todos(self):
+        todos = self.mongo.find_user_tasks(self.user_rut)
         return jsonify(todos)
     def add_todo(self, user_rut):
 
