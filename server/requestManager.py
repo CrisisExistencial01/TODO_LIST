@@ -5,7 +5,7 @@ class requestManager:
     def __init__(self):
         self.app = Flask(__name__)
         self.mongo = MongoManager()
-        self.user_rut = 0000
+        self.user_rut = "0000"
 
     def register_routes(self):
 
