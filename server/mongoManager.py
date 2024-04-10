@@ -67,9 +67,10 @@ class MongoManager:
 
     def register(self, data):
         if self.find_user(data["rut"]):
-            print("User already exists")
+            return False
         else:
             self.insert_user(data)
+            return True
 
     def update_user(self, query, data):
         if self.find_user(query["rut"]):
@@ -107,9 +108,12 @@ class MongoManager:
         return self.find(self.tasks, query) # returns a dictionary with the task
 
     def update_task(self, rut, task_id, data):
-        query = {"id": task_id}
-        query["user"] = rut
-        self.update(self.tasks, query, data)
+        query = {"id": task_id, "user": rut}
+        task = self.find_task(rut, query)
+        if task.count > 0:
+            self.update(self.tasks, query, data)
+        else:
+            print("Task doesn't exist")
 
     def delete_task(self, rut, query):
         query["user"] = rut
