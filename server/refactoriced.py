@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from pymongo import MongoClient, PyMongoError
+from pymongo import MongoClient
 
 class MongoManager:
     def __init__(self):
