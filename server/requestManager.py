@@ -73,7 +73,6 @@ class requestManager:
 
     def update_todo(self, user_rut, task_id):
         data = request.get_json()
-        #data["user"] = self.user_rut
         self.mongo.update_task(self.user_rut, task_id, data)
         return jsonify({"msg": "Task updated successfully"})
 
