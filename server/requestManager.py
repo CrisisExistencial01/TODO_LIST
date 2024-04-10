@@ -13,7 +13,7 @@ class requestManager:
 
         # GET -> se pueden llamar desde el navegador
         self.app.route("/logout", methods=["GET"])(self.logout)
-        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos(user_rut))
+        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos(<user_rut>))
 
         # POST
         self.app.route("/login", methods=["POST"])(self.login)
