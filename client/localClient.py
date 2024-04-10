@@ -7,7 +7,7 @@ class LocalClient:
     def verificarConexion(self):
         print("Verificando conexión con el servidor...")
         try:
-            response = requests.get(self.url, timeout=3) # timeout=5 indica que la conexión se considera fallida si no se recibe respuesta en 5 segundos
+            response = requests.get(self.url, timeout=3) # timeout=3 indica que la conexión se considera fallida si no se recibe respuesta en 5 segundos
             return True
         except requests.exceptions.RequestException:
             return False
@@ -64,6 +64,7 @@ class menu:
     def __init__(self):
         self.client = LocalClient()
         self.user = None
+
     def login(self):
         rut = input("Ingrese su rut: ")
         password = input("Ingrese su contraseña: ")
@@ -71,51 +72,69 @@ class menu:
         print(response) # Imprime "Logged in successfully" o "Invalid credentials"
         if response == "Logged in successfully":
             self.user = rut
+
     def register(self):
         rut = input("Ingrese su rut: ")
         password = input("Ingrese su contraseña: ")
-        response = self.client.register(rut, password)
-        print(response) # Imprime "User created successfully" o "User already exists"
+        confirm = input("Confirme su contraseña: ")
+        if password != confirm:
+            print("Las contraseñas no coinciden")
+        else: 
+            response = self.client.register(rut, password)
+            print(response) # Imprime "User created successfully" o "User already exists"
+
     def logout(self):
         response = self.client.logout()
         print(response) # Imprime "Logged out successfully"
+        self.user = None
+
     def menuText(self):
         print("1. Iniciar sesión")
         print("2. Registrarse")
-        print("3. Cerrar sesión")
-        print("4. Salir")
+        print("0. Salir")
+
+    def menuUserText(self):
+        print("1. Agregar tarea")
+        print("2. Editar tarea")
+        print("3. Eliminar tarea")
+        print("0. Cerrar sesion")
     def printTodos(self):
-        todos = self.client.get_todos()
-        print("Tareas:")
-        for task in todos:
-            print(f"{task['id']}. {task['title']} ({task['status']})")
+        if self.user:
+            todos = self.client.get_todos()
+            print("Tareas:")
+            for task in todos:
+                print(f"{task['id']}. {task['title']} ({task['status']})")
+        else:
+            print("Debe iniciar sesión para ver sus tareas.")
+
     def menuUser(self):
-        while True:
-            print("1. Agregar tarea")
-            print("2. Editar tarea")
-            print("3. Eliminar tarea")
-            print("0. Volver")
-            option = input("Seleccione una opción: ")
-            if option == "1":
-                title = input("Ingrese el título de la tarea: ")
-                description = input("Ingrese la descripción de la tarea: ")
-                response = self.client.add_todo(title, description)
-                print(response)
-            elif option == "2":
-                task_id = input("Ingrese el id de la tarea a editar: ")
-                title = input("Ingrese el nuevo título de la tarea: ")
-                status = input("Ingrese el nuevo estado de la tarea: ")
-                description = input("Ingrese la nueva descripción de la tarea: ")
-                response = self.client.update_todo(task_id, title, status, description)
-                print(response)
-            elif option == "3":
-                task_id = input("Ingrese el id de la tarea a eliminar: ")
-                response = self.client.delete_todo(task_id)
-                print(response)
-            elif option == "0":
-                break
-            else:
-                print("Opción no válida")
+        if self.user:
+            while True:
+                print("Seleccione una opción:")
+                option = input("0. Cerrar sesion\n1. Agregar tarea\n2. Editar tarea\n3. Eliminar tarea\nSeleccione una opción: ")
+                if option == "1":
+                    title = input("Ingrese el título de la tarea: ")
+                    description = input("Ingrese la descripción de la tarea: ")
+                    response = self.client.add_todo(title, description)
+                    print(response)
+                elif option == "2":
+                    task_id = input("Ingrese el id de la tarea a editar: ")
+                    title = input("Ingrese el nuevo título de la tarea: ")
+                    status = input("Ingrese el nuevo estado de la tarea: ")
+                    description = input("Ingrese la nueva descripción de la tarea: ")
+                    response = self.client.update_todo(task_id, title, status, description)
+                    print(response)
+                elif option == "3":
+                    task_id = input("Ingrese el id de la tarea a eliminar: ")
+                    response = self.client.delete_todo(task_id)
+                    print(response)
+                elif option == "0":
+                    self.user = None
+                    break
+                else:
+                    print("Opción no válida")
+        else:
+            print("Debe iniciar sesión para acceder a esta sección.")
 
     def menu(self):
         if self.client.verificarConexion():
@@ -130,36 +149,18 @@ class menu:
                     self.register()
                 elif option == "3":
                     self.logout()
+                elif option == "4":
+                    self.printTodos()
                 elif option == "0":
                     break
                 else:
                     print("Opción no válida")
         else:
             print("No se pudo establecer conexión con el servidor")
+
     def run(self):
         self.menu()
-
-# Iniciar sesión
-"""
-login_response = client.login("0000", "1234")
-print(login_response)
-new_user = {"rut": "1111", "password": "4321"}
-register_response = client.register(new_user["rut"], new_user["password"])
-print(register_response)
-# Obtener todas las tareas del usuario
-#todos = client.get_todos()
-#print(todos)
-
-# Agregar una nueva tarea
-# task = {"title": "Nueva tarea", "description": "Descripción de la nueva tarea"}
-# add_response = client.add_todo(task["title"], task["description"])
-print(add_response)
-
-# Cerrar sesión
-logout_response = client.logout()
-print(logout_response)
-"""
-
 if __name__ == "__main__":
     menu = menu()
     menu.run()
+
