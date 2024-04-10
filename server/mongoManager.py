@@ -66,10 +66,10 @@ class MongoManager:
         return False
 
     def register(self, data):
-        if not self.find_user(data["rut"]):
-            self.insert(self.users, data)
-        else:
+        if self.find_user(data["rut"]):
             print("User already exists")
+        else:
+            self.insert_user(data)
 
     def update_user(self, query, data):
         if self.find_user(query["rut"]):
