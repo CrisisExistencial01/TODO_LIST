@@ -13,7 +13,7 @@ class requestManager:
 
         # GET -> se pueden llamar desde el navegador
         self.app.route("/logout", methods=["GET"])(self.logout)
-        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos)
+        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos(user_rut))
 
         # POST
         self.app.route("/login", methods=["POST"])(self.login)
@@ -26,7 +26,6 @@ class requestManager:
         # DELETE
         self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
         self.app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
-        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
 
     def login(self):
         data = request.get_json()
@@ -51,8 +50,8 @@ class requestManager:
         else:
             return jsonify({"msg": "User already exists"})
     
-    def get_todos(self):
-        todos = self.mongo.find_user_tasks(self.user_rut)
+    def get_todos(self, user_rut):
+        todos = self.mongo.find_user_tasks(user_rut)
         return jsonify(todos)
     def add_todo(self, user_rut):
 
