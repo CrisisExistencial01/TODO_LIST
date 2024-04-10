@@ -13,19 +13,19 @@ class requestManager:
 
         # GET -> se pueden llamar desde el navegador
         self.app.route("/logout", methods=["GET"])(self.logout)
-        self.app.route("/<user_rut>/todos", methods=["GET"])(self.get_todos(<user_rut>))
+        self.app.route("/<user_rut>/todos", methods=["GET"])(lambda: self.get_todos(user_rut))
 
         # POST
-        self.app.route("/login", methods=["POST"])(self.login)
-        self.app.route("/register", methods=["POST"])(self.register)
-        self.app.route("/<user_rut>/todos", methods=["POST"])(self.add_todo)
+        self.app.route("/login", methods=["POST"])(lambda: self.login)
+        self.app.route("/register", methods=["POST"])(lambda: self.register)
+        self.app.route("/<user_rut>/todos", methods=["POST"])(lambda: self.add_todo)
 
         # PUT
-        self.app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(self.update_todo)
+        self.app.route("/<user_rut>/todos/<task_id>", methods=["PUT"])(lambda: self.update_todo)
 
         # DELETE
-        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(self.delete_todo)
-        self.app.route("/<user_rut>", methods=["DELETE"])(self.delete_user)
+        self.app.route("/<user_rut>/todos/<task_id>", methods=["DELETE"])(lambda: self.delete_todo)
+        self.app.route("/<user_rut>", methods=["DELETE"])(lambda: self.delete_user)
 
     def login(self):
         data = request.get_json()
